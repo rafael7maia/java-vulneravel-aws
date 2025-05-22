@@ -7,15 +7,22 @@
     <groupId>org.example</groupId>
     <artifactId>java-reachable-goof</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Java Reachable Goof</name>
+    <description>Projeto exemplo com dependências atualizadas e configuração recomendada</description>
+    <url>http://www.example.org/java-reachable-goof</url>
+
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
     <dependencies>
+        <!-- Dependência atualizada para versão mais segura do commons-collections -->
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
@@ -23,5 +30,20 @@
             <version>1.0.0-beta2</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
