@@ -1,16 +1,26 @@
 version: 0.2
 env:
-    secrets-manager:
-      TOKEN: firstSecret:tokenForSonar
+  secrets-manager:
+    TOKEN: firstSecret:tokenForSonar
+    SNYK_TOKEN: secondSecret:tokenForSnyk  # Adicione o segredo do Snyk aqui
 phases:
   install:
     runtime-versions:
       java: latest
+      nodejs: latest
+    commands:
+      - npm install -g snyk
   build:
     commands:
       - mvn verify sonar:sonar -Dsonar.projectKey=awsorganizarion -Dsonar.organization=awsorganizarion -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$TOKEN
       - sleep 5
-      - |- 
+      - |-
         quality_status=$(curl -s -u $TOKEN: https://sonarcloud.io/api/qualitygates/project_status?projectKey=awsorganizarion | jq -r '.projectStatus.status')
-        echo "SonarCloud analysistatus is $quality_status"; 
-        if [ $quality_status = "ERROR" ] ; then exit 1;fi 
+        echo "SonarCloud analysis status is $quality_status"
+        if [ "$quality_status" = "ERROR" ]; then exit 1; fi
+      - snyk auth $SNYK_TOKEN
+      - snyk test --json > snyk-report.json || true
+
+artifacts:
+  files:
+    - snyk-report.json
