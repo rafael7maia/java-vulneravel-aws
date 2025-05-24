@@ -20,7 +20,6 @@ phases:
         if [ "$quality_status" = "ERROR" ]; then exit 1; fi
       - snyk auth $SNYK_TOKEN
       - snyk test --json > snyk-report.json || true
-
 artifacts:
   files:
     - snyk-report.json
