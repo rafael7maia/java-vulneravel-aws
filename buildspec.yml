@@ -14,23 +14,21 @@ phases:
     commands:
       - mvn verify sonar:sonar -Dsonar.projectKey=awsorganizarion -Dsonar.organization=awsorganizarion -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$TOKEN
       - sleep 5
-      - |-
+      - |
         quality_status=$(curl -s -u $TOKEN: https://sonarcloud.io/api/qualitygates/project_status?projectKey=awsorganizarion | jq -r '.projectStatus.status')
         echo "SonarCloud analysis status is $quality_status"
         if [ "$quality_status" = "ERROR" ]; then exit 1; fi
       - snyk auth $SNYK_TOKEN
       - snyk test --json > snyk-report.json || true
+      - |
+        apt-get update
+        apt-get -y install wget
+        apt-get -y install default-jdk
+        wget https://github.com/zaproxy/zaproxy/releases/download/v2.16.0/ZAP_2.16.0_Linux.tar.gz
+        tar -xvf ZAP_2.16.0_Linux.tar.gz
+        cd ZAP_2.16.0
+        ./zap.sh -cmd -quickurl https://www.example.com -quickprogress -quickout ../zap_report.html
 artifacts:
   files:
     - snyk-report.json
-      - |-
-              apt-get update
-              apt-get -y install wget
-              apt-get -y install default-jdk
-              wget https://github.com/zaproxy/zaproxy/releases/download/v2.16.0/ZAP_2.16.0_Linux.tar.gz
-              tar -xvf ZAP_2.16.0_Linux.tar.gz
-              cd ZAP_2.16.0
-              ./zap.sh -cmd -quickurl https://www.example.com -quickprogress -quickout ../zap_report.html 
-      artifacts:
-        files:
-          - zap_report.html
+    - zap_report.html
